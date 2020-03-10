@@ -1,7 +1,38 @@
 #include "asf.h"
 
-
-#include "asf.h"
+#define NOTE_C4  262   //Defining note frequency
+#define NOTE_D4  294
+#define NOTE_E4  330
+#define NOTE_F4  349
+#define NOTE_G4  392
+#define NOTE_A4  440
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_D5  587
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_G5  784
+#define NOTE_A5  880
+#define NOTE_B5 988
+#define c  261
+#define d  294
+#define e  329
+#define f  349
+#define g  391
+#define gS  415
+#define a  440
+#define aS  455
+#define b  466
+#define cH  523
+#define cSH  554
+#define dH  587
+#define dSH  622
+#define eH  659
+#define fH  698
+#define fSH  740
+#define gH  784
+#define gSH  830
+#define aH  880
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -114,59 +145,79 @@
 /* constants                                                            */
 /************************************************************************/
 int notes[] = {
-	NOTE_E7, NOTE_E7, 0, NOTE_E7,
-	0, NOTE_C7, NOTE_E7, 0,
-	NOTE_G7, 0, 0,  0,
-	NOTE_G6, 0, 0, 0,
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+	NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+	NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+	NOTE_C5, NOTE_A4, NOTE_B4, 0,
 
-	NOTE_C7, 0, 0, NOTE_G6,
-	0, 0, NOTE_E6, 0,
-	0, NOTE_A6, 0, NOTE_B6,
-	0, NOTE_AS6, NOTE_A6, 0,
+	NOTE_A4, NOTE_A4,
+	//Repeat of first part
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
 
-	NOTE_G6, NOTE_E7, NOTE_G7,
-	NOTE_A7, 0, NOTE_F7, NOTE_G7,
-	0, NOTE_E7, 0, NOTE_C7,
-	NOTE_D7, NOTE_B6, 0, 0,
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+	NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+	NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+	NOTE_C5, NOTE_A4, NOTE_B4, 0,
+	//End of Repeat
 
-	NOTE_C7, 0, 0, NOTE_G6,
-	0, 0, NOTE_E6, 0,
-	0, NOTE_A6, 0, NOTE_B6,
-	0, NOTE_AS6, NOTE_A6, 0,
+	NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+	NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+	NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+	NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4,
 
-	NOTE_G6, NOTE_E7, NOTE_G7,
-	NOTE_A7, 0, NOTE_F7, NOTE_G7,
-	0, NOTE_E7, 0, NOTE_C7,
-	NOTE_D7, NOTE_B6, 0, 0
+	NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+	NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+	NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+	NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4
 };
-
 int tempo[] = {
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-
-	9, 9, 9,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-
-	9, 9, 9,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
-	12, 12, 12, 12,
+	83, 83, 83, 83,
+	83, 83, 166,
+	333,
+	83, 83, 83, 83,
+	83, 83, 166,
+	333,
+	83, 83, 83, 83,
+	83, 83, 166,
+	333,
+	83, 83, 83, 83,
+	83, 83, 166,
+	166, 55, 55, 55,
+	166, 166,
+	166, 166,
+	166, 166,
+	55, 55, 55, 55, 55, 55,
+	100, 100, 100,
+	100, 100, 100,
+	333, 333, 333
 };
-
 /************************************************************************/
 /* variaveis globais                                                    */
 /************************************************************************/
@@ -219,28 +270,44 @@ int main(void)
 	// inicializa sistema e IOs
 	init();
 	
-
+	char PAUSE;
 	// super loop
 	// aplicacoes embarcadas não devem sair do while(1).
 	while (1)
 	{
-		for (int i=0;i <33;i++){
-			for (int j=0;j<200;j++){
-				pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
-				pio_set(PIOC, LED_PIO_IDX_MASK);      
-				delay_us((1.0/(2.0*(float)notes[i]))*1000000.0);                        
-				pio_clear(PIOC, LED_PIO_IDX_MASK);   
-				pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
-				delay_us((1.0/(2.0*(float)notes[i]))*1000000.0);
-			}             
+	if(!pio_get(BUT_PIO,PIO_DEFAULT,BUT_PIO_IDX_MASK)){
+		
+		PAUSE = !PAUSE;
+		delay_ms(10);
 		}
 		
-		pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
-		delay_us(200);
-		pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
-		delay_us(200);
+		for (int i=0;i <(sizeof(notes)/sizeof(notes[0]));i++){
+			float temp = (1.0/(float)notes[i])*1000.0;
+			for (int j=0;j<tempo[i]/temp;j++){
+				if(pio_get(BUT_PIO,PIO_DEFAULT,BUT_PIO_IDX_MASK)){
+				
+				if(notes[i]!=0){
+					
+					pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
+					pio_set(PIOC, LED_PIO_IDX_MASK);
+					delay_us(temp*1000.0);
+					pio_clear(PIOC, LED_PIO_IDX_MASK);
+					pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
+					delay_us(temp*1000.0);
+			}else{
+				delay_us(temp*1000.0);
+			}}else{
+				
+			
+}
+				
+				}
+				          
+		}
+		}
 
 
-	}
+	
+
 	return 0;
 }
