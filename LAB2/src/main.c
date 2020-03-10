@@ -1,34 +1,33 @@
-/**
- * 5 semestre - Eng. da Computação - Insper
- * Rafael Corsi - rafael.corsi@insper.edu.br
- *
- * Projeto 0 para a placa SAME70-XPLD
- *
- * Objetivo :
- *  - Introduzir ASF e HAL
- *  - Configuracao de clock
- *  - Configuracao pino In/Out
- *
- * Material :
- *  - Kit: ATMEL SAME70-XPLD - ARM CORTEX M7
- */
-
-/************************************************************************/
-/* includes                                                             */
-/************************************************************************/
-
 #include "asf.h"
 
-/************************************************************************/
-/* defines                                                              */
-/************************************************************************/
 
 #include "asf.h"
+#define NOTE_C4  262   //Defining note frequency
+#define NOTE_D4  294
+#define NOTE_E4  330
+#define NOTE_F4  349
+#define NOTE_G4  392
+#define NOTE_A4  440
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_D5  587
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_G5  784
+#define NOTE_A5  880
+#define NOTE_B5  988
 
+// Config LED
 #define LED_PIO           PIOC                 // periferico que controla o LED
 #define LED_PIO_ID        12                  // ID do periférico PIOC (controla LED)
 #define LED_PIO_IDX       8                    // ID do LED no PIO
 #define LED_PIO_IDX_MASK  (1 << LED_PIO_IDX)   // Mascara para CONTROLARMOS o LED
+
+//Condig Buzzer
+#define BUZ_PIO				PIOC 
+#define BUZ_PIO_ID			ID_PIOC
+#define BUZ_PIO_IDX			13
+#define BUZ_PIO_IDX_MASK    (1 << BUZ_PIO_IDX)
 
 // Configuracoes do botao
 #define BUT_PIO PIOA
@@ -36,20 +35,116 @@
 #define BUT_PIO_IDX 11
 #define BUT_PIO_IDX_MASK (1u << BUT_PIO_IDX)
 
-/*  Default pin configuration (no attribute). */
-#define _PIO_DEFAULT             (0u << 0)
-/*  The internal pin pull-up is active. */
-#define _PIO_PULLUP              (1u << 0)
-/*  The internal glitch filter is active. */
-#define _PIO_DEGLITCH            (1u << 1)
-/*  The pin is open-drain. */
-#define _PIO_OPENDRAIN           (1u << 2)
-/*  The internal debouncing filter is active. */
-#define _PIO_DEBOUNCE            (1u << 3)
-
 /************************************************************************/
 /* constants                                                            */
 /************************************************************************/
+int notes[] = {       //Note of the song, 0 is a rest/pulse
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+	NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+	NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+	NOTE_C5, NOTE_A4, NOTE_B4, 0,
+
+	NOTE_A4, NOTE_A4,
+	//Repeat of first part
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+	NOTE_A4, NOTE_G4, NOTE_A4, 0,
+	
+	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+	NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+	NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	
+	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+	NOTE_D5, NOTE_E5, NOTE_A4, 0,
+	NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+	NOTE_C5, NOTE_A4, NOTE_B4, 0,
+	//End of Repeat
+
+	NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+	NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+	NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+	NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4,
+
+	NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+	NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+	NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+	NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4
+};
+
+int duration[] = {         //duration of each note (in ms) Quarter Note is set to 250 ms
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 125,
+	
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 125,
+	
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 125, 250, 125,
+
+	125, 125, 250, 125, 125,
+	250, 125, 250, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 375,
+
+	250, 125,
+	//Rpeat of First Part
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 125,
+	
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 125,
+	
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 125, 250, 125,
+
+	125, 125, 250, 125, 125,
+	250, 125, 250, 125,
+	125, 125, 250, 125, 125,
+	125, 125, 375, 375,
+	//End of Repeat
+	
+	250, 125, 375, 250, 125, 375,
+	125, 125, 125, 125, 125, 125, 125, 125, 375,
+	250, 125, 375, 250, 125, 375,
+	125, 125, 125, 125, 125, 500,
+
+	250, 125, 375, 250, 125, 375,
+	125, 125, 125, 125, 125, 125, 125, 125, 375,
+	250, 125, 375, 250, 125, 375,
+	125, 125, 125, 125, 125, 500
+};
 
 /************************************************************************/
 /* variaveis globais                                                    */
@@ -68,34 +163,7 @@ void init(void);
 /************************************************************************/
 /* funcoes                                                              */
 /************************************************************************/
-void _pio_set(Pio *p_pio, const uint32_t ul_mask)
-{
-	p_pio->PIO_SODR = ul_mask;
-}
 
-void _pio_clear(Pio *p_pio, const uint32_t ul_mask)
-{
-	p_pio->PIO_CODR = ul_mask;
-}
-
-void _pio_pull_up(Pio *p_pio, const uint32_t ul_mask,
-const uint32_t ul_pull_up_enable){
-		
-		if(p_pio->PIO_PUDR == 1){
-			
-		}
-		p_pio->PIO_PUER = 1;
-}
-
-void _pio_set_input(Pio *p_pio, const uint32_t ul_mask,
-        const uint32_t ul_attribute)
-{
-	p_pio->PIO_ODR = ul_mask;
-	if(ul_attribute & _PIO_PULLUP){
-		//_pio_se
-	}
-
-}
 // Função de inicialização do uC
 void init(void){
 	// Initialize the board clock
@@ -106,13 +174,17 @@ void init(void){
 	// Ativa o PIO na qual o LED foi conectado
 	// para que possamos controlar o LED.
 	pmc_enable_periph_clk(LED_PIO_ID);
-	pio_set_output(LED_PIO, LED_PIO_IDX_MASK, 0, 0, 0);
-
-	// Inicializa PIO do botao
+	pmc_enable_periph_clk(BUZ_PIO_ID);
 	pmc_enable_periph_clk(BUT_PIO_ID);
-	//Inicializa PC8 como saída
-	_pio_set_input(BUT_PIO, BUT_PIO_MASK, _PIO_PULLUP);
+
+
+	pio_set_output(LED_PIO, LED_PIO_IDX_MASK, 0, 0, 0);
+	pio_set_output(BUZ_PIO, BUZ_PIO_IDX_MASK,0,0,0);
+	
+	pio_set_input(BUT_PIO, BUT_PIO_IDX_MASK, PIO_PULLUP);
 	pio_pull_up(BUT_PIO,BUT_PIO_IDX_MASK,1);
+	
+	//pio_pull_up(BUZ_PIO,BUZ_PIO_IDX_MASK,1);
 	
 }
 
@@ -132,9 +204,11 @@ int main(void)
 	// aplicacoes embarcadas não devem sair do while(1).
 	while (1)
 	{
-		_pio_set(PIOC, LED_PIO_IDX_MASK);      // Coloca 1 no pino LED
+		pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
+		pio_set(PIOC, LED_PIO_IDX_MASK);      // Coloca 1 no pino LED
 		delay_ms(500);                        // Delay por software de 200 ms
-		_pio_clear(PIOC, LED_PIO_IDX_MASK);    // Coloca 0 no pino do LED
+		pio_clear(PIOC, LED_PIO_IDX_MASK);    // Coloca 0 no pino do LED
+		pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
 		delay_ms(500);                        // Delay por software de 200 ms
 		status = pio_get(PIOA, PIO_INPUT, BUT_PIO_IDX_MASK);
 	}
