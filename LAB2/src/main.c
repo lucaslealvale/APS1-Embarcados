@@ -50,6 +50,9 @@
 #define BUT2_PIO_ID			12
 #define BUT2_PIO_IDX		31
 #define BUT2_PIO_IDX_MASK	(1u << BUT2_PIO_IDX)
+
+volatile char PAUSE;
+
 /************************************************************************/
 /* constants                                                            */
 /************************************************************************/
@@ -83,9 +86,11 @@ void init(void);
 /************************************************************************/
 /* funcoes                                                              */
 /************************************************************************/
+void pause(void){
+  PAUSE = !PAUSE;
+}
 
-
-void play_song(music music, char *PAUSE, char *status){
+void play_song(music music, char *PAUSE){
 	
 	if (music.order ==1){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
@@ -111,15 +116,8 @@ void play_song(music music, char *PAUSE, char *status){
 					delay_ms(music.tempo[i]);
 				} else{
 				float temp = (1.0/(float)music.notes[i])*1000.0;
+				pio_clear(LED_PIO,LED_PIO_IDX_MASK);				
 				for (int j=0;j<(music.tempo[i]/temp)*0.9;j++){
-					*status = pio_get(BUT_PIO,PIO_DEFAULT,BUT_PIO_IDX_MASK);
-					pio_clear(LED_PIO,LED_PIO_IDX_MASK);
-				
-					if (!*status){
-						//pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
-						*PAUSE = !*PAUSE;
-						delay_ms(700);
-						}
 					if(*PAUSE) j=0; 
 					else {
 						if(music.notes[i]!=0){
@@ -171,8 +169,12 @@ void init(void){
 
 	pio_set_input(BUT3_PIO, BUT3_PIO_IDX_MASK, PIO_PULLUP & PIO_DEBOUNCE);
 	pio_pull_up(BUT3_PIO,BUT3_PIO_IDX_MASK,1);
+
+	pio_handler_set(BUT_PIO, BUT_PIO_ID, BUT_PIO_IDX_MASK, PIO_IT_RISE_EDGE, pause);
+	pio_enable_interrupt(BUT_PIO, BUT_PIO_IDX_MASK);
 	
-	//pio_pull_up(BUZ_PIO,BUZ_PIO_IDX_MASK,1);
+	NVIC_EnableIRQ(BUT_PIO_ID);
+	NVIC_SetPriority(BUT_PIO_ID, 4); // Prioridade 4
 	
 }
 
@@ -205,9 +207,8 @@ int main(void)
 	music3.size = (sizeof(mario_melody)/sizeof(mario_melody[0]));
 	music3.order = 3;
 
-	char status;
-	char PAUSE=0;
 	char but_status = 0;
+	PAUSE = 0;
 	pio_set(LED_PIO,LED_PIO_IDX_MASK);
 	pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
 	pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
@@ -218,17 +219,17 @@ int main(void)
 		but_status = pio_get(BUT1_PIO,PIO_DEFAULT, BUT1_PIO_IDX_MASK);
 		if (!but_status){
 			delay_ms(500);
-			play_song(music1,&PAUSE, &status);
+			play_song(music1,&PAUSE);
 		}
 		but_status = pio_get(BUT2_PIO,PIO_DEFAULT, BUT2_PIO_IDX_MASK);
 		if (!but_status){
 			delay_ms(500);
-			play_song(music2,&PAUSE, &status);
+			play_song(music2,&PAUSE);
 		}
 		but_status = pio_get(BUT3_PIO,PIO_DEFAULT, BUT3_PIO_IDX_MASK);
 		if (!but_status){
 			delay_ms(500);
-			play_song(music3,&PAUSE, &status);
+			play_song(music3,&PAUSE);
 		}
 		
 			
