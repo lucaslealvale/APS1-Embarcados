@@ -3,7 +3,7 @@ Atividade Pratica Supervisionada da materia Sistemas Emarcados ministrada no Qui
 ## Começando
 Para conseguir tocar músicas em seu kit será necessário o uso e experiência com o software de desenvolvimento Atmel Studio e de GitHub.
 
-## Prerequisites
+## Pré-requisitos
 * Atmel Studio  
 * ATSAME70-XPLD
 * Buzzer
