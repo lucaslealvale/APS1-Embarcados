@@ -231,11 +231,6 @@ int main(void)
 			delay_ms(500);
 			play_song(music3,&PAUSE);
 		}
-		
-			
-
-		//play_song(music2,&STOP,&PAUSE, &status);
-		//play_song(music3,&STOP,&PAUSE, &status);
 	
 		}
 			
