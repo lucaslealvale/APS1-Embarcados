@@ -3,18 +3,46 @@ Atividade Pratica Supervisionada da materia Sistemas Emarcados ministrada no Qui
 ## Começando
 Para conseguir tocar músicas em seu kit será necessário o uso e experiência com o software de desenvolvimento Atmel Studio e de GitHub.
 
-### Prerequisites
-Atmel Studio  
-Kit de desenvolvimento - ATSAME70-XPLD
+## Prerequisites
+* Atmel Studio  
+* ATSAME70-XPLD
+* Buzzer
+* OLED XPLAINED PRO
 
-### Instalando
+## Instalando
 Para realizar a instalação da infraestrutura necessária será necessário seguir os seguintes passos descritos neste link:  
 https://insper.github.io/ComputacaoEmbarcada/Sobre-Ferramental/
 
+## Configuração
+  
+### Buzzer
+##### +VCC  
+* SAME70-> PC13  
+##### -VCC
+* SAME70-> +VCC
+  
+  
+### OLED XPLAINED PRO
+* SAME70-> EXT1
+  
+## Funcionalidades
+### OLED XPLAINED PRO
+* Botão 1 -> Marcha Imperial - Star Wars 
+* Botão 2 -> Underworld - Mario 
+* Botão 3 -> Música tema Mario 
+
+### SAME70
+* Botão SW300 -> Pause/Play
+  
+  
+## Assista ao Demo do projeto funcionando:
+https://youtu.be/ehK6h7Nc_T4 
+  
+  
 ## Autores
 
-* **Leonardo Mendes**  [PurpleBooth](https://github.com/zMendes)
-* **Lucas Leal Vale**  [PurpleBooth](https://github.com/lucaslealvale)
+* **Leonardo Mendes**  [git](https://github.com/zMendes)
+* **Lucas Leal Vale**  [git](https://github.com/lucaslealvale)
 
 
 exemplo de readme da pagina: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
