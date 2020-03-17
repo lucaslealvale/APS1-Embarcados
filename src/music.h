@@ -1,4 +1,6 @@
-#define NOTE_C4  262   //Defining note frequency
+// Estas musicas foram compiladas por Bruno arthur em https://github.com/brunoartc/Embarcados/blob/master/APS%20PIO-IO/src/musicas.h
+// Porém obtidas de diferentes links que serão mencionados no decorrer do código
+#define NOTE_C4  262  
 #define NOTE_D4  294
 #define NOTE_E4  330
 #define NOTE_F4  349
@@ -120,7 +122,10 @@
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
+//musicas
 
+//piratas do caribe musica
+//By Xitang 2016.06.27  @ github
 int pirate_melody[] = {
 	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
 	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
@@ -195,6 +200,7 @@ int pirate_tempo[] = {
 	100, 100, 100,
 	333, 333, 333
 };
+
 int underworld_melody[] = {
 	NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,
 	NOTE_AS3, NOTE_AS4, 0,
@@ -216,7 +222,8 @@ int underworld_melody[] = {
 	NOTE_AS3, NOTE_A3, NOTE_GS3,
 	0, 0, 0
 };
-//Underwolrd tempo
+//Underwolrd tempo by Prince @ princetronics.com
+
 int underworld_tempo[] = {
 	83, 83, 83, 83,
 	83, 83, 166,
@@ -238,6 +245,7 @@ int underworld_tempo[] = {
 	100, 100, 100,
 	333, 333, 333
 };
+//marcha imperial by nicksort @github
 int starWars_melody[] = {
 	a,a,a,f,cH,a,f,cH,a,0,eH,eH,eH,fH,cH,gS,f,cH,a,0
 };
@@ -245,7 +253,8 @@ int starWars_tempo[] = {
 	500,500,500,350,150,500,350,150,650,500,500,500,500,350,150,500,350,150,650,500
 };
 
-int mario_melody[] = { //by Prince @ princetronics.com
+//by Prince @ princetronics.com
+int mario_melody[] = { 
 	NOTE_E7, NOTE_E7, 0, NOTE_E7,
 	0, NOTE_C7, NOTE_E7, 0,
 	NOTE_G7, 0, 0,  0,
@@ -271,7 +280,8 @@ int mario_melody[] = { //by Prince @ princetronics.com
 	0, NOTE_E7, 0, NOTE_C7,
 	NOTE_D7, NOTE_B6, 0, 0
 };
-//Mario main them tempo by Prince
+//Mario main them tempo by Prince @ princetronics.com
+
 int mario_tempo[] = {
 	83, 83, 83, 83,
 	83, 83, 83, 83,
