@@ -45,4 +45,3 @@ https://youtu.be/ehK6h7Nc_T4
 * **Lucas Leal Vale**  [git](https://github.com/lucaslealvale)
 
 
-exemplo de readme da pagina: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
