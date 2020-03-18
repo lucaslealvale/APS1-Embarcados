@@ -13,6 +13,9 @@ Para conseguir tocar músicas em seu kit será necessário o uso e experiência 
 Para realizar a instalação da infraestrutura necessária será necessário seguir os seguintes passos descritos neste link:  
 https://insper.github.io/ComputacaoEmbarcada/Sobre-Ferramental/
 
+## Como funciona  
+O código está estrutuarado da seguinte maneira: Temos um array contendo as frequências de cada e um array contendo sua duração em ms para três músicas. Para emitirmos som no buzzer, ligamos a um sinal PWM com a frequência de cada nota. Para sincronizar cada nota com seu tempo certo, calculamos quanto tempo leva para cada ciclo do buzzer e ajustamos de acordo. Os três botões da placa OLED são para alternar entre as músicas e seus leds servem de identificador visual. O botão SW3000 funciona como pause/play e o LED da placa pisca de acordo com as mudanças de notas da música.
+
 ## Configuração
   
 ### Buzzer
@@ -37,7 +40,7 @@ https://insper.github.io/ComputacaoEmbarcada/Sobre-Ferramental/
   
 ## Assista ao Demo do projeto funcionando:
 https://youtu.be/xlldZFkdpVg
-  
+
   
 ## Autores
 
