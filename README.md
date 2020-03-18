@@ -36,7 +36,7 @@ https://insper.github.io/ComputacaoEmbarcada/Sobre-Ferramental/
   
   
 ## Assista ao Demo do projeto funcionando:
-https://youtu.be/ehK6h7Nc_T4 
+https://youtu.be/xlldZFkdpVg
   
   
 ## Autores
