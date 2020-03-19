@@ -64,11 +64,6 @@ typedef struct {
 	int order;
 } music;
 
-
-
-
-
-
 /************************************************************************/
 /* variaveis globais                                                    */
 /************************************************************************/
@@ -90,8 +85,7 @@ void pause(void){
   PAUSE = !PAUSE;
 }
 
-void play_song(music music, char *PAUSE){
-	
+void leds_song( music music){	
 	if (music.order ==1){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
@@ -106,11 +100,24 @@ void play_song(music music, char *PAUSE){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
 		pio_clear(LED3_PIO,LED3_PIO_IDX_MASK);
-
 	}
-	
+}
 
+
+int get_song(void){
+		unsigned int music = -1;
+		if(!pio_get(BUT1_PIO,PIO_DEFAULT, BUT1_PIO_IDX_MASK))
+			music = 1;
+		if(!pio_get(BUT2_PIO,PIO_DEFAULT, BUT2_PIO_IDX_MASK))
+			music = 2;
+		if(!pio_get(BUT3_PIO,PIO_DEFAULT, BUT3_PIO_IDX_MASK))
+			music = 3;
+		return(music);
+}
+
+int play_song(music music, char *PAUSE){
 		for (int i=0;i <music.size;i++){
+
 				if (music.notes[i] ==0){
 					pio_set(LED_PIO,LED_PIO_IDX_MASK);
 					delay_ms(music.tempo[i]);
@@ -118,7 +125,14 @@ void play_song(music music, char *PAUSE){
 				float temp = (1.0/(float)music.notes[i])*1000.0;
 				pio_clear(LED_PIO,LED_PIO_IDX_MASK);				
 				for (int j=0;j<(music.tempo[i]/temp)*0.9;j++){
-					if(*PAUSE) j=0; 
+
+					// A CADA BATIDA VERIFICA BOTAO!
+					unsigned int music_new = get_song();
+					if(music_new != -1 && music_new !=music.order)
+						return(music_new);
+
+					if(*PAUSE) 
+						j=0; 
 					else {
 						if(music.notes[i]!=0){
 							pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
@@ -131,8 +145,8 @@ void play_song(music music, char *PAUSE){
 				pio_set(LED_PIO,LED_PIO_IDX_MASK);
 				delay_ms(60);
 			}
-
 		}
+		return (-1);
 	
 }
 
@@ -213,26 +227,35 @@ int main(void)
 	pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
 	pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
 	pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+
 	// super loop
 	// aplicacoes embarcadas não devem sair do while(1).
+
+	int music_new = -1;
+	int music = -1;
+
 	while (1) {
-		but_status = pio_get(BUT1_PIO,PIO_DEFAULT, BUT1_PIO_IDX_MASK);
-		if (!but_status){
-			delay_ms(500);
-			play_song(music1,&PAUSE);
+		if(music_new == -1)
+			music_new = get_song();
+
+		delay_ms(500);
+		switch (music_new){
+			case 1: 
+				leds_song(music1);
+				music_new = play_song(music1,&PAUSE);
+				break;
+			case 2: 
+				leds_song(music2);
+				music_new = play_song(music2,&PAUSE);
+				break;
+			case 3: 
+				leds_song(music3);
+				music_new = play_song(music3,&PAUSE);
+				break;
+			default:
+				break;
 		}
-		but_status = pio_get(BUT2_PIO,PIO_DEFAULT, BUT2_PIO_IDX_MASK);
-		if (!but_status){
-			delay_ms(500);
-			play_song(music2,&PAUSE);
-		}
-		but_status = pio_get(BUT3_PIO,PIO_DEFAULT, BUT3_PIO_IDX_MASK);
-		if (!but_status){
-			delay_ms(500);
-			play_song(music3,&PAUSE);
-		}
-	
-		}
+	}
 			
 	return 0;
 }
