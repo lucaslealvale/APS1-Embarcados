@@ -14,7 +14,7 @@ Para realizar a instalação da infraestrutura necessária será necessário seg
 https://insper.github.io/ComputacaoEmbarcada/Sobre-Ferramental/
 
 ## Como funciona  
-O código está estrutuarado da seguinte maneira: Temos um array contendo as frequências de cada e um array contendo sua duração em ms para três músicas. Para emitirmos som no buzzer, ligamos a um sinal PWM com a frequência de cada nota. Para sincronizar cada nota com seu tempo certo, calculamos quanto tempo leva para cada ciclo do buzzer e ajustamos de acordo. Os três botões da placa OLED são para alternar entre as músicas e seus leds servem de identificador visual. O botão SW3000 funciona como pause/play e o LED da placa pisca de acordo com as mudanças de notas da música.
+O código está estrutuarado da seguinte maneira: Temos um array contendo as frequências de cada e um array contendo sua duração em ms para três músicas. Para emitirmos som no buzzer, ligamos a um sinal PWM com a frequência de cada nota. Para sincronizar cada nota com seu tempo certo, calculamos quanto tempo leva para cada ciclo do buzzer e ajustamos de acordo. Os três botões da placa OLED são para alternar entre as músicas e seus leds servem de identificador visual, além de piscarem de acordo com as notas da música. O botão SW3000 funciona como pause/play e o LED da placa acende quando a música está pausada.
 
 ## Configuração
   
@@ -39,8 +39,7 @@ O código está estrutuarado da seguinte maneira: Temos um array contendo as fre
   
   
 ## Assista ao Demo do projeto funcionando:
-https://youtu.be/xlldZFkdpVg
-
+https://youtu.be/xAPuTY2uWjs
   
 ## Autores
 
