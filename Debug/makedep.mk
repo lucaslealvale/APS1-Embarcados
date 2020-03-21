@@ -2,11 +2,27 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-src\ASF\common\services\clock\same70\sysclk.c
+src\ASF\sam\drivers\spi\spi.c
+
+src\gfx_mono_framebuffer.c
+
+src\gfx_mono_generic.c
+
+src\gfx_mono_text.c
+
+src\gfx_mono_ug_2832hsweg04.c
+
+src\ssd1306.c
+
+src\sysfont.c
 
 src\ASF\common\services\delay\sam\cycle_counter.c
 
+src\ASF\common\services\clock\same70\sysclk.c
+
 src\ASF\common\utils\interrupt\interrupt_sam_nvic.c
+
+src\ASF\sam\boards\same70_xplained\init.c
 
 src\ASF\sam\drivers\mpu\mpu.c
 

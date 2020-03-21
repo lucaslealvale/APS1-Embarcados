@@ -1,10 +1,13 @@
 #include "asf.h"
+#include "gfx_mono_ug_2832hsweg04.h"
+#include "gfx_mono_text.h"
+#include "sysfont.h"
 
 #include "music.h"
 
 // Config LED
 #define LED_PIO           PIOC                 // periferico que controla o LED
-#define LED_PIO_ID        12                  // ID do periférico PIOC (controla LED)
+#define LED_PIO_ID        12                  // ID do perif�rico PIOC (controla LED)
 #define LED_PIO_IDX       8                    // ID do LED no PIO
 #define LED_PIO_IDX_MASK  (1 << LED_PIO_IDX)   // Mascara para CONTROLARMOS o LED
 
@@ -24,7 +27,7 @@
 #define LED3_PIO_IDX_MASK	(1 << LED3_PIO_IDX)
 
 //Condig Buzzer
-#define BUZ_PIO				PIOC 
+#define BUZ_PIO				PIOC
 #define BUZ_PIO_ID			ID_PIOC
 #define BUZ_PIO_IDX			13
 #define BUZ_PIO_IDX_MASK    (1 << BUZ_PIO_IDX)
@@ -63,6 +66,7 @@ typedef struct {
 	int *tempo;
 	int size;
 	char order;
+	char *name;
 } music;
 
 /************************************************************************/
@@ -89,7 +93,7 @@ void play_song(music music);
 /* funcoes                                                              */
 /************************************************************************/
 void pause(void){
-  PAUSE = !PAUSE;
+	PAUSE = !PAUSE;
 }
 void order1(void){
 	ORDER = 1;
@@ -101,7 +105,7 @@ void order3(void){
 	ORDER = 3;
 }
 
-void leds_song( music m){	
+void leds_song( music m){
 	if (m.order ==1){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
@@ -112,7 +116,7 @@ void leds_song( music m){
 		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
 		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
 
-	} else {
+		} else {
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
 		pio_clear(LED3_PIO,LED3_PIO_IDX_MASK);
@@ -122,42 +126,44 @@ void leds_song( music m){
 
 
 void play_song(music m){
-		for (int i=0;i <m.size;i++){
+	
+	gfx_mono_draw_string(m.name, 10,10, &sysfont);
+	for (int i=0;i <m.size;i++){
 
-				if (m.notes[i] ==0){
-					pio_set(LED_PIO,LED_PIO_IDX_MASK);
-					delay_ms(m.tempo[i]);
-				} else{
-				float temp = (1.0/(float)m.notes[i])*1000.0;
-				pio_clear(LED_PIO,LED_PIO_IDX_MASK);				
-				for (int j=0;j<(m.tempo[i]/temp)*0.9;j++){
-					
-					if(ORDER !=m.order)
-						return;
+		if (m.notes[i] ==0){
+			pio_set(LED_PIO,LED_PIO_IDX_MASK);
+			delay_ms(m.tempo[i]);
+			} else{
+			float temp = (1.0/(float)m.notes[i])*1000.0;
+			pio_clear(LED_PIO,LED_PIO_IDX_MASK);
+			for (int j=0;j<(m.tempo[i]/temp)*0.9;j++){
+				
+				if(ORDER !=m.order)
+				return;
 
-					if(PAUSE) 
-						j=0; 
-					else {
-						if(m.notes[i]!=0){
-							pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
-							delay_us(temp*1000.0);
-							pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
-							delay_us(temp*1000.0);
-						}				
+				if(PAUSE)
+				j=0;
+				else {
+					if(m.notes[i]!=0){
+						pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
+						delay_us(temp*1000.0);
+						pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
+						delay_us(temp*1000.0);
 					}
 				}
-				pio_set(LED_PIO,LED_PIO_IDX_MASK);
-				delay_ms(60);
 			}
+			pio_set(LED_PIO,LED_PIO_IDX_MASK);
+			delay_ms(60);
 		}
-		pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
-		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
-		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
-		ORDER=0;
+	}
+	pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+	pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
+	pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+	ORDER=0;
 	
 }
 
-// Função de inicialização do uC
+// Fun��o de inicializa��o do uC
 void init(void){
 	// Initialize the board clock
 	sysclk_init();
@@ -180,7 +186,7 @@ void init(void){
 	pio_set_output(BUZ_PIO, BUZ_PIO_IDX_MASK,0,0,0);
 
 	pio_set_input(BUT_PIO, BUT_PIO_IDX_MASK, PIO_PULLUP & PIO_DEBOUNCE);
-	pio_pull_up(BUT_PIO,BUT_PIO_IDX_MASK,1);	
+	pio_pull_up(BUT_PIO,BUT_PIO_IDX_MASK,1);
 
 	pio_set_input(BUT1_PIO, BUT1_PIO_IDX_MASK, PIO_PULLUP & PIO_DEBOUNCE);
 	pio_pull_up(BUT1_PIO,BUT1_PIO_IDX_MASK,1);
@@ -241,16 +247,19 @@ int main(void)
 	music1.tempo = &starWars_tempo;
 	music1.size = (sizeof(starWars_melody)/sizeof(starWars_melody[0]));
 	music1.order = 1;
+	music1.name= &"Star Wars";
 
 	music2.notes = &underworld_melody;
 	music2.tempo = &underworld_tempo;
 	music2.size = (sizeof(underworld_melody)/sizeof(underworld_melody[0]));
 	music2.order = 2;
+	music2.name= &"Underworld";
 
 	music3.notes = &mario_melody;
 	music3.tempo = &mario_tempo;
 	music3.size = (sizeof(mario_melody)/sizeof(mario_melody[0]));
 	music3.order = 3;
+	music3.name= &"Mario Theme";
 
 	PAUSE = 0;
 	ORDER = 0;
@@ -258,34 +267,46 @@ int main(void)
 	pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
 	pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
 	pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+	board_init();
+	sysclk_init();
+
+	delay_init();
+
+	gfx_mono_ssd1306_init();
+
 
 	// super loop
-	// aplicacoes embarcadas não devem sair do while(1).
+	// aplicacoes embarcadas n�o devem sair do while(1).
 
 
 	while (1) {
-		
-		pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
+
 		switch (ORDER){
-			case 1: 
+			case 1:
 				ORDER = 1;
 				leds_song(music1);
 				play_song(music1);
+				gfx_mono_draw_string("            ", 10,10, &sysfont);
+
 				break;
-			case 2: 
-				ORDER = 2;			
+			case 2:
+				ORDER = 2;
 				leds_song(music2);
 				play_song(music2);
+				gfx_mono_draw_string("            ", 10,10, &sysfont);
+
 				break;
-			case 3: 
+			case 3:
 				ORDER = 3;
 				leds_song(music3);
 				play_song(music3);
+				gfx_mono_draw_string("            ", 10,10, &sysfont);
+
 				break;
 			default:
 				break;
 		}
 	}
-			
+	
 	return 0;
 }
