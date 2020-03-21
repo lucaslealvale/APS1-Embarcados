@@ -265,7 +265,6 @@ int main(void)
 
 	while (1) {
 		
-		pmc_sleep(SAM_PM_SMODE_SLEEP_WFI);
 		switch (ORDER){
 			case 1: 
 				ORDER = 1;
