@@ -82,8 +82,9 @@ void pause(void);
 void order1(void);
 void order2(void);
 void order3(void);
-void leds_song(music music);
 void play_song(music music);
+void turn_on(char order);
+void turn_off(char order);
 
 /************************************************************************/
 /* interrupcoes                                                         */
@@ -105,45 +106,66 @@ void order3(void){
 	ORDER = 3;
 }
 
-void leds_song( music m){
-	if (m.order ==1){
-		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
-		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
-		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
-	}
-	else if (m.order==2){
-		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
-		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
-		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
-
-		} else {
-		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
-		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
-		pio_clear(LED3_PIO,LED3_PIO_IDX_MASK);
+void turn_on(char order){
+	switch (order){
+		case 1:
+			pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
+			break;
+		case 2:
+			pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
+			pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
+			break;
+		case 3:
+			pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
+			pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
+			pio_clear(LED3_PIO,LED3_PIO_IDX_MASK);
+			break;
+		default:
+			break;
 	}
 }
-
-
-
+void turn_off(char order){
+	switch (order){
+		case 1:
+			pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+			break;
+		case 2:
+			pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+			pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
+			break;
+		case 3:
+			pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+			pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
+			pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+			break;
+		default:
+			break;
+	}
+}
 void play_song(music m){
 	
 	gfx_mono_draw_string(m.name, 10,10, &sysfont);
 	for (int i=0;i <m.size;i++){
 
 		if (m.notes[i] ==0){
-			pio_set(LED_PIO,LED_PIO_IDX_MASK);
+			turn_off(m.order);
 			delay_ms(m.tempo[i]);
 			} else{
 			float temp = (1.0/(float)m.notes[i])*1000.0;
-			pio_clear(LED_PIO,LED_PIO_IDX_MASK);
+			turn_on(m.order);
 			for (int j=0;j<(m.tempo[i]/temp)*0.9;j++){
 				
-				if(ORDER !=m.order)
-				return;
+				if(ORDER !=m.order){
+					pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+					pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
+					pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+				return;}
 
-				if(PAUSE)
+				if(PAUSE){
 				j=0;
+				pio_clear(LED_PIO,LED_PIO_IDX_MASK);}
 				else {
+					pio_set(LED_PIO,LED_PIO_IDX_MASK);
 					if(m.notes[i]!=0){
 						pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
 						delay_us(temp*1000.0);
@@ -152,7 +174,7 @@ void play_song(music m){
 					}
 				}
 			}
-			pio_set(LED_PIO,LED_PIO_IDX_MASK);
+			turn_off(m.order);
 			delay_ms(60);
 		}
 	}
@@ -273,6 +295,7 @@ int main(void)
 	delay_init();
 
 	gfx_mono_ssd1306_init();
+	gfx_mono_draw_string("Pick a song:", 10,10, &sysfont);
 
 
 	// super loop
@@ -283,25 +306,19 @@ int main(void)
 
 		switch (ORDER){
 			case 1:
-				ORDER = 1;
-				leds_song(music1);
-				play_song(music1);
 				gfx_mono_draw_string("            ", 10,10, &sysfont);
-
+				ORDER = 1;
+				play_song(music1);
 				break;
 			case 2:
-				ORDER = 2;
-				leds_song(music2);
-				play_song(music2);
 				gfx_mono_draw_string("            ", 10,10, &sysfont);
-
+				ORDER = 2;
+				play_song(music2);
 				break;
 			case 3:
-				ORDER = 3;
-				leds_song(music3);
-				play_song(music3);
 				gfx_mono_draw_string("            ", 10,10, &sysfont);
-
+				ORDER = 3;
+				play_song(music3);
 				break;
 			default:
 				break;
