@@ -303,7 +303,6 @@ int main(void)
 
 
 	while (1) {
-
 		switch (ORDER){
 			case 1:
 				gfx_mono_draw_string("            ", 10,10, &sysfont);
