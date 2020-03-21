@@ -52,6 +52,7 @@
 #define BUT2_PIO_IDX_MASK	(1u << BUT2_PIO_IDX)
 
 volatile char PAUSE;
+volatile char ORDER;
 
 /************************************************************************/
 /* constants                                                            */
@@ -61,7 +62,7 @@ typedef struct {
 	int *notes;
 	int *tempo;
 	int size;
-	int order;
+	char order;
 } music;
 
 /************************************************************************/
@@ -73,6 +74,12 @@ typedef struct {
 /************************************************************************/
 
 void init(void);
+void pause(void);
+void order1(void);
+void order2(void);
+void order3(void);
+void leds_song(music music);
+void play_song(music music);
 
 /************************************************************************/
 /* interrupcoes                                                         */
@@ -84,14 +91,23 @@ void init(void);
 void pause(void){
   PAUSE = !PAUSE;
 }
+void order1(void){
+	ORDER = 1;
+}
+void order2(void){
+	ORDER = 2;
+}
+void order3(void){
+	ORDER = 3;
+}
 
-void leds_song( music music){	
-	if (music.order ==1){
+void leds_song( music m){	
+	if (m.order ==1){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
 		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
 	}
-	else if (music.order==2){
+	else if (m.order==2){
 		pio_clear(LED1_PIO,LED1_PIO_IDX_MASK);
 		pio_clear(LED2_PIO,LED2_PIO_IDX_MASK);
 		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
@@ -104,37 +120,25 @@ void leds_song( music music){
 }
 
 
-int get_song(void){
-		unsigned int music = -1;
-		if(!pio_get(BUT1_PIO,PIO_DEFAULT, BUT1_PIO_IDX_MASK))
-			music = 1;
-		if(!pio_get(BUT2_PIO,PIO_DEFAULT, BUT2_PIO_IDX_MASK))
-			music = 2;
-		if(!pio_get(BUT3_PIO,PIO_DEFAULT, BUT3_PIO_IDX_MASK))
-			music = 3;
-		return(music);
-}
 
-int play_song(music music, char *PAUSE){
-		for (int i=0;i <music.size;i++){
+void play_song(music m){
+		for (int i=0;i <m.size;i++){
 
-				if (music.notes[i] ==0){
+				if (m.notes[i] ==0){
 					pio_set(LED_PIO,LED_PIO_IDX_MASK);
-					delay_ms(music.tempo[i]);
+					delay_ms(m.tempo[i]);
 				} else{
-				float temp = (1.0/(float)music.notes[i])*1000.0;
+				float temp = (1.0/(float)m.notes[i])*1000.0;
 				pio_clear(LED_PIO,LED_PIO_IDX_MASK);				
-				for (int j=0;j<(music.tempo[i]/temp)*0.9;j++){
+				for (int j=0;j<(m.tempo[i]/temp)*0.9;j++){
+					
+					if(ORDER !=m.order)
+						return;
 
-					// A CADA BATIDA VERIFICA BOTAO!
-					unsigned int music_new = get_song();
-					if(music_new != -1 && music_new !=music.order)
-						return(music_new);
-
-					if(*PAUSE) 
+					if(PAUSE) 
 						j=0; 
 					else {
-						if(music.notes[i]!=0){
+						if(m.notes[i]!=0){
 							pio_set(BUZ_PIO,BUZ_PIO_IDX_MASK);
 							delay_us(temp*1000.0);
 							pio_clear(BUZ_PIO,BUZ_PIO_IDX_MASK);
@@ -146,7 +150,10 @@ int play_song(music music, char *PAUSE){
 				delay_ms(60);
 			}
 		}
-		return (-1);
+		pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
+		pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
+		pio_set(LED3_PIO,LED3_PIO_IDX_MASK);
+		ORDER=0;
 	
 }
 
@@ -184,11 +191,35 @@ void init(void){
 	pio_set_input(BUT3_PIO, BUT3_PIO_IDX_MASK, PIO_PULLUP & PIO_DEBOUNCE);
 	pio_pull_up(BUT3_PIO,BUT3_PIO_IDX_MASK,1);
 
+	//interrupt do pause
 	pio_handler_set(BUT_PIO, BUT_PIO_ID, BUT_PIO_IDX_MASK, PIO_IT_RISE_EDGE, pause);
 	pio_enable_interrupt(BUT_PIO, BUT_PIO_IDX_MASK);
-	
+
 	NVIC_EnableIRQ(BUT_PIO_ID);
 	NVIC_SetPriority(BUT_PIO_ID, 4); // Prioridade 4
+	
+	//interrupt da muscic1
+	pio_handler_set(BUT1_PIO, BUT1_PIO_ID, BUT1_PIO_IDX_MASK, PIO_IT_RISE_EDGE, order1);
+	pio_enable_interrupt(BUT1_PIO, BUT1_PIO_IDX_MASK);
+
+	NVIC_EnableIRQ(BUT1_PIO_ID);
+	NVIC_SetPriority(BUT1_PIO_ID, 5); // Prioridade 5
+	
+	//interrupt da muscic2
+	pio_handler_set(BUT2_PIO, BUT2_PIO_ID, BUT2_PIO_IDX_MASK, PIO_IT_RISE_EDGE, order2);
+	pio_enable_interrupt(BUT2_PIO, BUT2_PIO_IDX_MASK);
+
+	NVIC_EnableIRQ(BUT2_PIO_ID);
+	NVIC_SetPriority(BUT2_PIO_ID, 5); // Prioridade 5
+
+	//interrupt da muscic3
+	pio_handler_set(BUT3_PIO, BUT3_PIO_ID, BUT3_PIO_IDX_MASK, PIO_IT_RISE_EDGE, order3);
+	pio_enable_interrupt(BUT3_PIO, BUT3_PIO_IDX_MASK);
+
+	NVIC_EnableIRQ(BUT3_PIO_ID);
+	NVIC_SetPriority(BUT3_PIO_ID, 5); // Prioridade 5
+	
+	
 	
 }
 
@@ -221,8 +252,8 @@ int main(void)
 	music3.size = (sizeof(mario_melody)/sizeof(mario_melody[0]));
 	music3.order = 3;
 
-	char but_status = 0;
 	PAUSE = 0;
+	ORDER = 0;
 	pio_set(LED_PIO,LED_PIO_IDX_MASK);
 	pio_set(LED1_PIO,LED1_PIO_IDX_MASK);
 	pio_set(LED2_PIO,LED2_PIO_IDX_MASK);
@@ -231,26 +262,24 @@ int main(void)
 	// super loop
 	// aplicacoes embarcadas não devem sair do while(1).
 
-	int music_new = -1;
-	int music = -1;
 
 	while (1) {
-		if(music_new == -1)
-			music_new = get_song();
 
-		delay_ms(500);
-		switch (music_new){
+		switch (ORDER){
 			case 1: 
+				ORDER = 1;
 				leds_song(music1);
-				music_new = play_song(music1,&PAUSE);
+				play_song(music1);
 				break;
 			case 2: 
+				ORDER = 2;			
 				leds_song(music2);
-				music_new = play_song(music2,&PAUSE);
+				play_song(music2);
 				break;
 			case 3: 
+				ORDER = 3;
 				leds_song(music3);
-				music_new = play_song(music3,&PAUSE);
+				play_song(music3);
 				break;
 			default:
 				break;
