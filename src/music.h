@@ -126,7 +126,7 @@
 
 //piratas do caribe musica
 //By Xitang 2016.06.27  @ github
-int pirate_melody[] = {
+const int pirate_melody[] = {
 	NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
 	NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
 	NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
@@ -179,7 +179,7 @@ int pirate_melody[] = {
 	NOTE_D5, 0, 0, NOTE_C5, 0, 0,
 	NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4
 };
-int pirate_tempo[] = {
+const int pirate_tempo[] = {
 	83, 83, 83, 83,
 	83, 83, 166,
 	333,
@@ -201,7 +201,7 @@ int pirate_tempo[] = {
 	333, 333, 333
 };
 
-int underworld_melody[] = {
+const int underworld_melody[] = {
 	NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,
 	NOTE_AS3, NOTE_AS4, 0,
 	0,
@@ -224,7 +224,7 @@ int underworld_melody[] = {
 };
 //Underwolrd tempo by Prince @ princetronics.com
 
-int underworld_tempo[] = {
+const int underworld_tempo[] = {
 	83, 83, 83, 83,
 	83, 83, 166,
 	333,
@@ -246,15 +246,15 @@ int underworld_tempo[] = {
 	333, 333, 333
 };
 //marcha imperial by nicksort @github
-int starWars_melody[] = {
+const int starWars_melody[] = {
 	a,a,a,f,cH,a,f,cH,a,0,eH,eH,eH,fH,cH,gS,f,cH,a,0
 };
-int starWars_tempo[] = {
+const int starWars_tempo[] = {
 	500,500,500,350,150,500,350,150,650,500,500,500,500,350,150,500,350,150,650,500
 };
 
 //by Prince @ princetronics.com
-int mario_melody[] = { 
+const int mario_melody[] = { 
 	NOTE_E7, NOTE_E7, 0, NOTE_E7,
 	0, NOTE_C7, NOTE_E7, 0,
 	NOTE_G7, 0, 0,  0,
@@ -282,7 +282,7 @@ int mario_melody[] = {
 };
 //Mario main them tempo by Prince @ princetronics.com
 
-int mario_tempo[] = {
+const int mario_tempo[] = {
 	83, 83, 83, 83,
 	83, 83, 83, 83,
 	83, 83, 83, 83,
