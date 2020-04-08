@@ -1,5 +1,5 @@
 # APS1-Embarcados - Tocador de músicas 8-bit em SAM-E70
-Atividade Pratica Supervisionada da materia Sistemas Emarcados ministrada no Quinto Semestre de Engenharia da Computação. O objetivo da mesma é familizar o estudante com o Kit de desenvolvimento - ATSAME70-XPLD. 
+Atividade Pratica Supervisionada da materia Sistemas Emarcados ministrada no Quinto Semestre de Engenharia da Computação. O objetivo deste projeto é adquirir conhecimento de programação em eletrônica embarcada. 
 ## Começando
 Para conseguir tocar músicas em seu kit será necessário o uso e experiência com o software de desenvolvimento Atmel Studio e de GitHub.
 
